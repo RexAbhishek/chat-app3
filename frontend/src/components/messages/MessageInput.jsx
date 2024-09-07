@@ -2,8 +2,9 @@ import React from 'react'
 import { LuSendHorizonal } from "react-icons/lu";
 import { TiMessages } from "react-icons/ti";
 function MessageInput() {
-    const chatSelected = false;
+    const chatSelected = true;
   return (
+	<div className='md:min-w-[450px] flex flex-col'>
      chatSelected ?
     (<form className='px-4 my-3'>
     			<div className='w-full relative'>
@@ -22,7 +23,7 @@ function MessageInput() {
 
         (<NoChatSelected />)
 
-    
+		</div>
         )
 }
 
