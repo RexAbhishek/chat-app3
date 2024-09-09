@@ -37,7 +37,7 @@ export const sendMessage = async (req,res) => {
         // res.status(201).json(newMessage);
 
 
-        res.status(201).json({message: "Message sent successfully"});
+        res.status(201).json(newMessage);
 
 
     } catch(error){
@@ -47,31 +47,41 @@ export const sendMessage = async (req,res) => {
     }
     //console.log("message sent",req.params.id);
 };
-
-export const getMessage = async (req,res) => {
-    try{
-
-        const {id:userToChatId} = req.params;
+export const getMessage = async (req, res) => {
+    try {
+        const { id: userToChatId } = req.params;
         const senderId = req.user._id;
 
+        // Find conversation and populate messages
         const conversation = await Conversation.findOne({
-            participants: {$all: [senderId, userToChatId]}
+            participants: { $all: [senderId, userToChatId] }
         }).populate("messages");
 
-        console.log(conversation)
+        // Log the conversation object to see its structure
+        console.log("Conversation Object:", conversation);
 
-        if (!conversation){
-            res.status(200).json([]);
+        // Check if conversation exists
+        if (!conversation) {
+            console.log("No conversation found.");
+            return res.status(200).json([]); // Ensure we exit the function
         }
-        res.status(200).json(conversation.messages);
 
+        // Ensure conversation.messages is not null or undefined
+        if (!conversation.messages) {
+            console.log("Conversation found but no messages.");
+            return res.status(200).json([]); // Return an empty array if no messages
+        }
 
-    } catch(error){
-        console.log("Error in getMessage  controller: ", error.message);
-        res.status(500).json({error:"Internal server error"});
+        // Respond with the messages if conversation is found
+        return res.status(200).json(conversation.messages);
 
+    } catch (error) {
+        console.log("Error in getMessage controller: ", error.message);
+        return res.status(500).json({ error: "Internal server error" }); // Ensure we exit the function
     }
 };
+
+
 
 
 
